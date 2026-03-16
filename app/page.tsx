@@ -21,7 +21,7 @@ export default function Home() {
       <FeaturesSection />
      
       
-      <IndustriesSection />
+      {/* <IndustriesSection /> */}
       <IntegrationsSection />
       <RoadmapSection />
       <Footer />

@@ -33,11 +33,11 @@ export function HeroSection() {
 
           <div className="pt-12 flex flex-col sm:flex-row gap-8 justify-center items-center text-sm">
             <div className="text-center">
-              <p className="text-2xl font-bold text-primary">500+</p>
-              <p className="text-muted-foreground">Active Businesses</p>
+              <p className="text-2xl font-bold text-primary">100+</p>
+              <p className="text-muted-foreground">Active Clients</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-primary">45K+</p>
+              <p className="text-2xl font-bold text-primary">5K+</p>
               <p className="text-muted-foreground">Employees Managed</p>
             </div>
             <div className="text-center">
