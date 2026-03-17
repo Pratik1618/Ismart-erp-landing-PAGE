@@ -1,7 +1,7 @@
 'use client'
 
-import { Card, CardContent } from '@/components/ui/card'
-import { Linkedin, Twitter } from 'lucide-react'
+import { useState, useRef, useEffect, useCallback } from 'react'
+import { Linkedin, Twitter, Users } from 'lucide-react'
 import Image from 'next/image'
 
 type TeamMember = {
@@ -21,34 +21,10 @@ const chairman: TeamMember = {
 }
 
 const directors: TeamMember[] = [
-  {
-    name: 'Vinayak Bhise',
-    role: 'Managing Director',
-    image: '/V.png',
-    bio: '',
-    social: { linkedin: '#', twitter: '#' },
-  },
-  {
-    name: 'Manoj Kambli',
-    role: 'Director HR',
-    image: '/Manoj.png',
-    bio: '',
-    social: { linkedin: '#', twitter: '#' },
-  },
-  {
-    name: 'Shobana Bagwe',
-    role: 'Director Finance',
-    image: '/Shobna.png',
-    bio: '',
-    social: { linkedin: '#', twitter: '#' },
-  },
-  {
-    name: 'Siddhesh Khanvilkar',
-    role: 'Director Operations',
-    image: '/Siddhesh.png',
-    bio: '',
-    social: { linkedin: '#', twitter: '#' },
-  },
+  { name: 'Vinayak Bhise', role: 'Managing Director', image: '/V.png', bio: '', social: { linkedin: '#', twitter: '#' } },
+  { name: 'Manoj Kambli', role: 'Director HR', image: '/Manoj.png', bio: '', social: { linkedin: '#', twitter: '#' } },
+  { name: 'Shobana Bagwe', role: 'Director Finance', image: '/Shobna.png', bio: '', social: { linkedin: '#', twitter: '#' } },
+  { name: 'Siddhesh Khanvilkar', role: 'Director Operations', image: '/Siddhesh.png', bio: '', social: { linkedin: '#', twitter: '#' } },
 ]
 
 const businessHead: TeamMember = {
@@ -68,130 +44,263 @@ const overseasHead: TeamMember = {
 }
 
 const businessTeam: TeamMember[] = [
-  {
-    name: 'Christopher Texeira',
-    role: 'VP Operations',
-    image: '/cropped.png',
-    bio: '',
-    social: { linkedin: '#', twitter: '#' },
-  },
-  {
-    name: 'Surendra Badgujar',
-    role: 'AVP Operations',
-    image: '/Surendra.png',
-    bio: '',
-    social: { linkedin: '#', twitter: '#' },
-  },
-  {
-    name: 'Dinesh Vyas',
-    role: 'AVP Finance',
-    image: '/Dinesh.png',
-    bio: '',
-    social: { linkedin: '#', twitter: '#' },
-  },
-  {
-    name: 'Jayesh Poojari',
-    role: 'Manager',
-    image: '/Jayesh.png',
-    bio: '',
-    social: { linkedin: '#', twitter: '#' },
-  },
-  {
-    name: 'Dipti Vichare',
-    role: 'Manager',
-    image: '/Dipti.png',
-    bio: '',
-    social: { linkedin: '#', twitter: '#' },
-  },
+  { name: 'Christopher Texeira', role: 'VP Operations', image: '/cropped.png', bio: '', social: { linkedin: '#', twitter: '#' } },
+  { name: 'Surendra Badgujar', role: 'AVP Operations', image: '/Surendra.png', bio: '', social: { linkedin: '#', twitter: '#' } },
+  { name: 'Dinesh Vyas', role: 'AVP Finance', image: '/Dinesh.png', bio: '', social: { linkedin: '#', twitter: '#' } },
+  { name: 'Jayesh Poojari', role: 'Manager', image: '/Jayesh.png', bio: '', social: { linkedin: '#', twitter: '#' } },
+  { name: 'Dipti Vichare', role: 'Manager', image: '/Dipti.png', bio: '', social: { linkedin: '#', twitter: '#' } },
 ]
 
+/* ─── Scroll fade-in ─────────────────────────────────────────────────── */
+function useFadeIn() {
+  const ref = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { el.classList.add('is-visible'); obs.disconnect() } },
+      { threshold: 0.05 }
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+  return ref
+}
+
+function FadeRow({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+  const ref = useFadeIn()
+  return <div ref={ref} className={`fade-row ${className}`}>{children}</div>
+}
+
+/* ─── Main Section ───────────────────────────────────────────────────── */
 export function LeadershipSection() {
+  const [showHeads, setShowHeads] = useState(false)
+  const [showBusinessTeam, setShowBusinessTeam] = useState(false)
+
+  const headsTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const bizTimer   = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const openHeads      = useCallback(() => { headsTimer.current && clearTimeout(headsTimer.current); setShowHeads(true) }, [])
+  const closeHeads     = useCallback(() => { headsTimer.current = setTimeout(() => { setShowHeads(false); setShowBusinessTeam(false) }, 320) }, [])
+  const keepHeadsAlive = useCallback(() => { headsTimer.current && clearTimeout(headsTimer.current) }, [])
+
+  const openBiz      = useCallback(() => { bizTimer.current && clearTimeout(bizTimer.current); setShowBusinessTeam(true) }, [])
+  const closeBiz     = useCallback(() => { bizTimer.current = setTimeout(() => setShowBusinessTeam(false), 320) }, [])
+  const keepBizAlive = useCallback(() => { bizTimer.current && clearTimeout(bizTimer.current) }, [])
+
   return (
-    <section className="w-full bg-background px-4 py-20 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl">
-        <div className="mb-12 space-y-4 text-center">
-          <h2 className="text-4xl font-bold text-foreground sm:text-5xl">
-            Leadership <span className="text-primary">Team</span>
-          </h2>
-          <p className="mx-auto max-w-3xl text-lg text-muted-foreground">
-            Reporting flow across chairman, directors, business heads, and operational teams.
-          </p>
-        </div>
+    <>
+      <style>{`
+        /* ── Scroll reveal ── */
+        .fade-row { opacity:0; transform:translateY(20px); transition:opacity .55s ease,transform .55s ease; }
+        .fade-row.is-visible { opacity:1; transform:none; }
+        .fade-row > * { opacity:0; transform:translateY(14px); transition:opacity .4s ease,transform .4s ease; }
+        .fade-row.is-visible > *:nth-child(1){opacity:1;transform:none;transition-delay:.04s}
+        .fade-row.is-visible > *:nth-child(2){opacity:1;transform:none;transition-delay:.11s}
+        .fade-row.is-visible > *:nth-child(3){opacity:1;transform:none;transition-delay:.18s}
+        .fade-row.is-visible > *:nth-child(4){opacity:1;transform:none;transition-delay:.25s}
+        .fade-row.is-visible > *:nth-child(5){opacity:1;transform:none;transition-delay:.32s}
 
-        <div className="space-y-10">
-          <div className="flex justify-center">
-            <div className="w-full sm:w-1/2 md:w-1/3 lg:w-[280px]">
-              <TeamCard member={chairman} />
+        /* ── Smooth height expand ── */
+        .tree-expand {
+          display: grid;
+          grid-template-rows: 0fr;
+          opacity: 0;
+          transition: grid-template-rows .44s cubic-bezier(.4,0,.2,1), opacity .3s ease;
+        }
+        .tree-expand.open { grid-template-rows: 1fr; opacity: 1; }
+        .tree-expand > .tree-inner { overflow: hidden; }
+
+        /* ── Cards ── */
+        .team-card { transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease; }
+        .team-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 16px 32px -8px hsl(var(--primary)/.2);
+          border-color: hsl(var(--primary)/.4) !important;
+        }
+        .team-card.has-children:hover {
+          border-color: hsl(var(--primary)/.55) !important;
+          box-shadow: 0 18px 40px -6px hsl(var(--primary)/.28);
+        }
+
+        /* Hover hint on expandable cards — zero height when hidden */
+        .expand-hint {
+          opacity: 0;
+          max-height: 0;
+          overflow: hidden;
+          transform: translateY(3px);
+          transition: opacity .18s ease, transform .18s ease, max-height .18s ease;
+          font-size: .58rem;
+          letter-spacing: .13em;
+          text-transform: uppercase;
+          color: hsl(var(--primary));
+          font-weight: 700;
+          padding-top: 0;
+        }
+        .has-children:hover .expand-hint {
+          opacity: .65;
+          transform: translateY(0);
+          max-height: 24px;
+          padding-top: 6px;
+        }
+
+        /* ── Chairman spinning ring ── */
+        .photo-ring {
+          background: conic-gradient(hsl(var(--primary)) 0%,hsl(var(--primary)/.1) 40%,hsl(var(--primary)) 70%,hsl(var(--primary)/.1) 100%);
+          animation: ring-spin 9s linear infinite;
+        }
+        @keyframes ring-spin { to { transform: rotate(360deg); } }
+
+        /* ── Tier badge ── */
+        .tier-badge {
+          position:absolute; top:-10px; left:50%; transform:translateX(-50%);
+          font-size:.58rem; letter-spacing:.15em; text-transform:uppercase;
+          padding:2px 10px; border-radius:999px;
+          background:hsl(var(--primary)); color:hsl(var(--primary-foreground));
+          white-space:nowrap; font-weight:700; z-index:10;
+        }
+
+        /* ── Connector pulse dots ── */
+        @keyframes pulse-dot{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:1;transform:scale(1.7)}}
+        .pulse-dot{ animation: pulse-dot 2.4s ease-in-out infinite; }
+
+        /* ── Shimmer divider ── */
+        .shimmer-line {
+          height:1px;
+          background:linear-gradient(90deg,transparent,hsl(var(--primary)/.5) 30%,hsl(var(--primary)) 50%,hsl(var(--primary)/.5) 70%,transparent);
+          background-size:200% 100%;
+          animation: shimmer 3s linear infinite;
+        }
+        @keyframes shimmer{ 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+        /* ── Social icons ── */
+        .social-btn { transition: background .16s ease, transform .16s ease; }
+        .social-btn:hover { background:hsl(var(--primary)/.12); transform:scale(1.18); }
+      `}</style>
+
+      <section className="w-full bg-background px-4 py-14 sm:px-6 lg:px-8 relative overflow-hidden">
+        {/* Subtle dot grid */}
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.025]"
+          style={{ backgroundImage:'radial-gradient(hsl(var(--primary)) 1px,transparent 1px)', backgroundSize:'30px 30px' }}
+        />
+
+        <div className="mx-auto max-w-7xl relative">
+
+          {/* ── Header ── */}
+          <div className="mb-10 text-center space-y-2">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-bold tracking-widest text-primary uppercase">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary pulse-dot" />
+              Organisational Structure
             </div>
+            <h2 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
+              Leadership{' '}
+              <span className="relative inline-block text-primary">
+                Team
+                <span className="absolute -bottom-1 left-0 right-0 shimmer-line" />
+              </span>
+            </h2>
+            <p className="mx-auto mt-2 max-w-lg text-sm text-muted-foreground">
+               Reporting flow across chairman, directors, business heads, and operational teams.
+            </p>
           </div>
 
-          <ConnectorGroup branches={4} />
+          {/* ── Tree ── */}
+          <div>
 
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
-            {directors.map((member) => (
-              <TeamCard key={member.name} member={member} />
-            ))}
-          </div>
+            {/* TIER 1 — Chairman (always visible) */}
+            <FadeRow className="flex justify-center">
+              <div className="relative w-full sm:w-52">
+                
+                <TeamCard member={chairman} variant="chairman" />
+              </div>
+            </FadeRow>
 
-          <ConnectorGroup branches={2} narrow />
+            <ConnectorGroup branches={4} label="Board of Directors" />
 
-          <div className="mx-auto grid max-w-3xl grid-cols-1 gap-6 md:grid-cols-2">
-            <TeamCard member={businessHead} />
-            <TeamCard member={overseasHead} />
-          </div>
+            {/* TIER 2 — Directors (always visible) hover triggers Business Heads */}
+            <div onMouseEnter={openHeads} onMouseLeave={closeHeads}>
+              <FadeRow className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                {directors.map((member) => (
+                  <TeamCard key={member.name} member={member} />
+                ))}
+              </FadeRow>
 
-          <BusinessHeadConnector />
+              {/* EXPAND: Business Heads (hover-revealed) */}
+              <div className={`tree-expand ${showHeads ? 'open' : ''}`} onMouseEnter={keepHeadsAlive} onMouseLeave={closeHeads}>
+                <div className="tree-inner">
+                  <div className="pt-1 pb-4">
 
-          <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-5">
-            {businessTeam.map((member) => (
-              <TeamCard key={member.name} member={member} />
-            ))}
+                    <ConnectorGroup branches={2} narrow label="Business Heads" />
+
+                    {/* TIER 3 — Business Heads */}
+                    <div onMouseEnter={openBiz} onMouseLeave={closeBiz}>
+                      <FadeRow className="mx-auto grid max-w-xl grid-cols-1 gap-3 md:grid-cols-2">
+                        <TeamCard member={businessHead} hasChildren hint="Hover to expand" />
+                        <TeamCard member={overseasHead} />
+                      </FadeRow>
+
+                      {/* EXPAND: Business Team */}
+                      <div className={`tree-expand ${showBusinessTeam ? 'open' : ''}`} onMouseEnter={keepBizAlive} onMouseLeave={closeBiz}>
+                        <div className="tree-inner">
+                          <div className="pt-1 pb-4">
+
+                            <BusinessHeadConnector />
+
+                            {/* TIER 4 — Business Team */}
+                            <FadeRow className="mx-auto grid max-w-5xl grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5 mt-1">
+                              {businessTeam.map((m) => <TeamCard key={m.name} member={m} />)}
+                            </FadeRow>
+
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   )
 }
 
-function ConnectorGroup({
-  branches,
-  narrow = false,
-}: {
-  branches: number
-  narrow?: boolean
-}) {
+/* ─── Connectors ─────────────────────────────────────────────────────── */
+function ConnectorGroup({ branches, narrow = false, label }: { branches: number; narrow?: boolean; label?: string }) {
   return (
-    <div className="flex justify-center">
-      <div className={`relative h-16 w-full ${narrow ? 'max-w-3xl' : 'max-w-6xl'}`}>
-        <div className="absolute left-1/2 top-0 h-8 w-px -translate-x-1/2 bg-primary/40" />
-        <div className="absolute left-1/2 top-8 h-px -translate-x-1/2 bg-primary/40" style={{ width: branchWidth(branches) }} />
-        <div
-          className="absolute top-8 flex -translate-x-1/2 justify-between"
-          style={{ left: '50%', width: branchWidth(branches) }}
-        >
-          {Array.from({ length: branches }).map((_, index) => (
-            <div key={index} className="flex flex-col items-center">
-              <div className="h-8 w-px bg-primary/40" />
-              <div className="h-2 w-2 rounded-full bg-primary/50" />
+    <div className="flex flex-col items-center my-2">
+      <div className={`relative h-14 w-full ${narrow ? 'max-w-2xl' : 'max-w-5xl'}`}>
+        <div className="absolute left-1/2 top-0 h-7 w-px -translate-x-1/2 bg-primary/40" />
+        <div className="absolute left-1/2 top-7 h-px -translate-x-1/2 bg-primary/25" style={{ width: branchWidth(branches) }} />
+        <div className="absolute top-7 flex -translate-x-1/2 justify-between" style={{ left:'50%', width: branchWidth(branches) }}>
+          {Array.from({ length: branches }).map((_, i) => (
+            <div key={i} className="flex flex-col items-center">
+              <div className="h-7 w-px bg-primary/40" />
+              <div className="pulse-dot h-2 w-2 rounded-full bg-primary/50" />
             </div>
           ))}
         </div>
       </div>
+      {label && <span className="text-[0.58rem] font-bold tracking-widest uppercase text-primary/40 mt-1 mb-1">{label}</span>}
     </div>
   )
 }
 
 function BusinessHeadConnector() {
   return (
-    <div className="mx-auto w-full max-w-6xl px-3">
-      <div className="relative h-16">
-        <div className="absolute left-1/2 top-0 h-8 w-px -translate-x-1/2 bg-primary/40 md:left-1/4" />
-        <div className="absolute left-1/2 top-8 h-px w-[90%] -translate-x-1/2 bg-primary/40" />
-        <div className="absolute left-1/2 top-8 flex w-[90%] -translate-x-1/2 justify-between">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <div key={index} className="flex flex-col items-center">
-              <div className="h-8 w-px bg-primary/40" />
-              <div className="h-2 w-2 rounded-full bg-primary/50" />
+    <div className="mx-auto w-full max-w-6xl px-3 my-2">
+      <div className="relative h-14">
+        <div className="absolute left-1/2 top-0 h-7 w-px -translate-x-1/2 bg-primary/40 md:left-1/4" />
+        <div className="absolute left-1/2 top-7 h-px w-[90%] -translate-x-1/2 bg-primary/25" />
+        <div className="absolute left-1/2 top-7 flex w-[90%] -translate-x-1/2 justify-between">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="flex flex-col items-center">
+              <div className="h-7 w-px bg-primary/40" />
+              <div className="pulse-dot h-2 w-2 rounded-full bg-primary/50" />
             </div>
           ))}
         </div>
@@ -201,38 +310,76 @@ function BusinessHeadConnector() {
 }
 
 function branchWidth(branches: number) {
-  if (branches <= 2) return '55%'
-  if (branches === 4) return '82%'
+  if (branches <= 2) return '50%'
+  if (branches === 4) return '78%'
   return '90%'
 }
 
-function TeamCard({ member }: { member: TeamMember }) {
+/* ─── Team Card ──────────────────────────────────────────────────────── */
+function TeamCard({
+  member,
+  variant = 'default',
+  hasChildren = false,
+  hint,
+}: {
+  member: TeamMember
+  variant?: 'default' | 'chairman'
+  hasChildren?: boolean
+  hint?: string
+}) {
+  const isChairman = variant === 'chairman'
+
   return (
-    <Card className="h-full overflow-hidden border-border/50">
-      <div className="flex h-48 w-full items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5">
+    <div
+      className={`team-card rounded-xl overflow-hidden border bg-card shadow-sm ${hasChildren ? 'has-children' : ''} border-primary/35`}
+    >
+      {/* Photo area */}
+      <div
+        className={`relative flex items-center justify-center ${isChairman ? 'h-36' : 'h-32'}`}
+        style={{ background: 'linear-gradient(150deg, rgba(134,239,172,.28) 0%, rgba(187,247,208,.12) 100%)' }}
+      >
         {member.image ? (
-          <div className="h-28 w-28 overflow-hidden rounded-full border-4 border-background shadow-sm sm:h-32 sm:w-32">
-            <Image src={member.image} alt={member.name} width={160} height={160} className="h-full w-full object-cover" />
+          <div className={`relative ${isChairman ? 'h-24 w-24' : 'h-20 w-20'}`}>
+            <div className="absolute -inset-1.5 rounded-full">
+              <div className="photo-ring h-full w-full rounded-full p-[2px]">
+                <div className="h-full w-full rounded-full" style={{ background: 'rgba(255,255,255,0.9)' }} />
+              </div>
+            </div>
+            <div className="overflow-hidden rounded-full h-full w-full relative z-10 shadow-sm border-2 border-primary/35">
+              <Image src={member.image} alt={member.name} width={120} height={120} className="h-full w-full object-cover" />
+            </div>
           </div>
         ) : (
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/30">
-            <span className="text-3xl font-bold text-primary">{member.name[0]}</span>
+          <div className={`flex items-center justify-center rounded-full bg-primary/15 ${isChairman ? 'h-20 w-20' : 'h-16 w-16'}`}>
+            <span className={`font-extrabold text-primary ${isChairman ? 'text-3xl' : 'text-2xl'}`}>{member.name[0]}</span>
           </div>
         )}
       </div>
-      <CardContent className="pt-6 text-center">
-        <h3 className="text-lg font-bold text-foreground">{member.name}</h3>
-        <p className="mb-2 text-sm font-medium text-primary">{member.role}</p>
-        {member.bio ? <p className="mb-4 text-sm text-muted-foreground">{member.bio}</p> : null}
-        <div className={`flex justify-center gap-2 ${member.bio ? '' : 'mt-4'}`}>
-          <a href={member.social.linkedin} className="rounded-lg p-2 transition-colors hover:bg-primary/10">
-            <Linkedin className="h-4 w-4 text-primary" />
+
+      {/* Content */}
+      <div className="px-3 pb-3 pt-3 text-center">
+        <h3 className={`font-bold text-foreground leading-tight ${isChairman ? 'text-base' : 'text-sm'}`}>{member.name}</h3>
+        <p className="mt-0.5 font-medium text-primary text-xs">{member.role}</p>
+        {member.bio && <p className="mt-1 text-xs text-muted-foreground leading-relaxed">{member.bio}</p>}
+
+        <div className="my-2 shimmer-line" />
+
+        <div className="flex justify-center gap-1">
+          <a href={member.social.linkedin} className="social-btn rounded-md p-1.5" aria-label={`${member.name} LinkedIn`}>
+            <Linkedin className="h-3 w-3 text-primary" />
           </a>
-          <a href={member.social.twitter} className="rounded-lg p-2 transition-colors hover:bg-primary/10">
-            <Twitter className="h-4 w-4 text-primary" />
+          <a href={member.social.twitter} className="social-btn rounded-md p-1.5" aria-label={`${member.name} Twitter`}>
+            <Twitter className="h-3 w-3 text-primary" />
           </a>
         </div>
-      </CardContent>
-    </Card>
+
+        {hasChildren && hint && (
+          <div className="expand-hint flex items-center justify-center gap-1">
+            <Users className="h-2.5 w-2.5" />
+            {hint}
+          </div>
+        )}
+      </div>
+    </div>
   )
 }
