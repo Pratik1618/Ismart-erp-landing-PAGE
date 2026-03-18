@@ -51,6 +51,16 @@ const businessTeam: TeamMember[] = [
   { name: 'Dipti Vichare', role: 'Manager', image: '/Dipti.png', bio: '', social: { linkedin: '#', twitter: '#' } },
 ]
 
+const financeTeam: TeamMember[] = [
+  { name: 'Suraj Sawant', role: 'Sr.Billing Executive', image: '/surajs.png', bio: '', social: { linkedin: '#', twitter: '#' } },
+  { name: 'Suraj Dalvi', role: 'Sr.Billing Executive', image: '/suraj.png', bio: '', social: { linkedin: '#', twitter: '#' } },
+  { name: 'Sheshmani Yadav', role: 'Accounts Manager', image: '/mani.png', bio: '', social: { linkedin: '#', twitter: '#' } },
+  { name: 'Harsh Patil', role: 'Accounts Executive', image: '/harsh.png', bio: '', social: { linkedin: '#', twitter: '#' } },
+  { name: 'Nitin Ahire', role: 'Billing Manager', image: '/nitin.png', bio: '', social: { linkedin: '#', twitter: '#' } },
+  { name: 'Sushil Pawar', role: 'Billing Executive', image: '/sushil.png', bio: '', social: { linkedin: '#', twitter: '#' } },
+  { name: 'Shrikant Chintampol', role: 'Accounts Executive', image: '/shrikant.png', bio: '', social: { linkedin: '#', twitter: '#' } },
+]
+
 /* ─── Scroll fade-in ─────────────────────────────────────────────────── */
 function useFadeIn() {
   const ref = useRef<HTMLDivElement>(null)
@@ -76,17 +86,34 @@ function FadeRow({ children, className = '' }: { children: React.ReactNode; clas
 export function LeadershipSection() {
   const [showHeads, setShowHeads] = useState(false)
   const [showBusinessTeam, setShowBusinessTeam] = useState(false)
+  const [showFinanceTeam, setShowFinanceTeam] = useState(false)
 
   const headsTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const bizTimer   = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const financeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const openHeads      = useCallback(() => { headsTimer.current && clearTimeout(headsTimer.current); setShowHeads(true) }, [])
-  const closeHeads     = useCallback(() => { headsTimer.current = setTimeout(() => { setShowHeads(false); setShowBusinessTeam(false) }, 320) }, [])
+  const closeHeads     = useCallback(() => {
+    headsTimer.current = setTimeout(() => {
+      setShowHeads(false)
+      setShowBusinessTeam(false)
+      setShowFinanceTeam(false)
+    }, 320)
+  }, [])
   const keepHeadsAlive = useCallback(() => { headsTimer.current && clearTimeout(headsTimer.current) }, [])
 
   const openBiz      = useCallback(() => { bizTimer.current && clearTimeout(bizTimer.current); setShowBusinessTeam(true) }, [])
-  const closeBiz     = useCallback(() => { bizTimer.current = setTimeout(() => setShowBusinessTeam(false), 320) }, [])
+  const closeBiz     = useCallback(() => {
+    bizTimer.current = setTimeout(() => {
+      setShowBusinessTeam(false)
+      setShowFinanceTeam(false)
+    }, 320)
+  }, [])
   const keepBizAlive = useCallback(() => { bizTimer.current && clearTimeout(bizTimer.current) }, [])
+
+  const openFinance      = useCallback(() => { financeTimer.current && clearTimeout(financeTimer.current); setShowFinanceTeam(true) }, [])
+  const closeFinance     = useCallback(() => { financeTimer.current = setTimeout(() => setShowFinanceTeam(false), 320) }, [])
+  const keepFinanceAlive = useCallback(() => { financeTimer.current && clearTimeout(financeTimer.current) }, [])
 
   return (
     <>
@@ -100,6 +127,8 @@ export function LeadershipSection() {
         .fade-row.is-visible > *:nth-child(3){opacity:1;transform:none;transition-delay:.18s}
         .fade-row.is-visible > *:nth-child(4){opacity:1;transform:none;transition-delay:.25s}
         .fade-row.is-visible > *:nth-child(5){opacity:1;transform:none;transition-delay:.32s}
+        .fade-row.is-visible > *:nth-child(6){opacity:1;transform:none;transition-delay:.39s}
+        .fade-row.is-visible > *:nth-child(7){opacity:1;transform:none;transition-delay:.46s}
 
         /* ── Smooth height expand ── */
         .tree-expand {
@@ -248,9 +277,41 @@ export function LeadershipSection() {
                             <BusinessHeadConnector />
 
                             {/* TIER 4 — Business Team */}
-                            <FadeRow className="mx-auto grid max-w-5xl grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5 mt-1">
-                              {businessTeam.map((m) => <TeamCard key={m.name} member={m} />)}
-                            </FadeRow>
+                            <div>
+                              <FadeRow className="mx-auto grid max-w-5xl grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5 mt-1">
+                                {businessTeam.map((m) => (
+                                  <div
+                                    key={m.name}
+                                    onMouseEnter={m.name === 'Dinesh Vyas' ? openFinance : undefined}
+                                    onMouseLeave={m.name === 'Dinesh Vyas' ? closeFinance : undefined}
+                                  >
+                                    <TeamCard
+                                      member={m}
+                                      hasChildren={m.name === 'Dinesh Vyas'}
+                                      hint={m.name === 'Dinesh Vyas' ? 'Hover to expand' : undefined}
+                                    />
+                                  </div>
+                                ))}
+                              </FadeRow>
+
+                              <div className={`tree-expand ${showFinanceTeam ? 'open' : ''}`} onMouseEnter={keepFinanceAlive} onMouseLeave={closeFinance}>
+                                <div className="tree-inner">
+                                  <div className="pt-1 pb-2">
+
+                                    <ConnectorGroup branches={financeTeam.length} label="Finance Team" />
+
+                                    <FadeRow className="mx-auto mt-1 flex max-w-7xl flex-wrap justify-center gap-3 xl:flex-nowrap">
+                                      {financeTeam.map((m, index) => (
+                                        <div key={`${m.name || 'empty'}-${index}`} className="w-full sm:w-[calc(50%-0.375rem)] lg:w-[calc(25%-0.5625rem)] xl:w-[160px] xl:flex-none">
+                                          <TeamCard member={m} />
+                                        </div>
+                                      ))}
+                                    </FadeRow>
+
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
 
                           </div>
                         </div>
@@ -328,6 +389,7 @@ function TeamCard({
   hint?: string
 }) {
   const isChairman = variant === 'chairman'
+  const isEmptyCard = !member.name && !member.role && !member.image
 
   return (
     <div
@@ -349,6 +411,8 @@ function TeamCard({
               <Image src={member.image} alt={member.name} width={120} height={120} className="h-full w-full object-cover" />
             </div>
           </div>
+        ) : isEmptyCard ? (
+          <div className={`rounded-full border-2 border-dashed border-primary/25 bg-white/50 ${isChairman ? 'h-20 w-20' : 'h-16 w-16'}`} />
         ) : (
           <div className={`flex items-center justify-center rounded-full bg-primary/15 ${isChairman ? 'h-20 w-20' : 'h-16 w-16'}`}>
             <span className={`font-extrabold text-primary ${isChairman ? 'text-3xl' : 'text-2xl'}`}>{member.name[0]}</span>
@@ -358,20 +422,30 @@ function TeamCard({
 
       {/* Content */}
       <div className="px-3 pb-3 pt-3 text-center">
-        <h3 className={`font-bold text-foreground leading-tight ${isChairman ? 'text-base' : 'text-sm'}`}>{member.name}</h3>
-        <p className="mt-0.5 font-medium text-primary text-xs">{member.role}</p>
-        {member.bio && <p className="mt-1 text-xs text-muted-foreground leading-relaxed">{member.bio}</p>}
+        {isEmptyCard ? (
+          <div className="h-[74px]" />
+        ) : (
+          <>
+            <h3 className={`font-bold text-foreground leading-tight ${isChairman ? 'text-base' : 'text-sm'}`}>{member.name}</h3>
+            <p className="mt-0.5 font-medium text-primary text-xs">{member.role}</p>
+            {member.bio && <p className="mt-1 text-xs text-muted-foreground leading-relaxed">{member.bio}</p>}
+          </>
+        )}
 
         <div className="my-2 shimmer-line" />
 
-        <div className="flex justify-center gap-1">
-          <a href={member.social.linkedin} className="social-btn rounded-md p-1.5" aria-label={`${member.name} LinkedIn`}>
-            <Linkedin className="h-3 w-3 text-primary" />
-          </a>
-          <a href={member.social.twitter} className="social-btn rounded-md p-1.5" aria-label={`${member.name} Twitter`}>
-            <Twitter className="h-3 w-3 text-primary" />
-          </a>
-        </div>
+        {isEmptyCard ? (
+          <div className="h-[30px]" />
+        ) : (
+          <div className="flex justify-center gap-1">
+            <a href={member.social.linkedin} className="social-btn rounded-md p-1.5" aria-label={`${member.name} LinkedIn`}>
+              <Linkedin className="h-3 w-3 text-primary" />
+            </a>
+            <a href={member.social.twitter} className="social-btn rounded-md p-1.5" aria-label={`${member.name} Twitter`}>
+              <Twitter className="h-3 w-3 text-primary" />
+            </a>
+          </div>
+        )}
 
         {hasChildren && hint && (
           <div className="expand-hint flex items-center justify-center gap-1">
