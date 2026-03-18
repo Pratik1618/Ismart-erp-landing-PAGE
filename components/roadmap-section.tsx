@@ -6,27 +6,33 @@ import { ArrowRight, Zap } from 'lucide-react'
 
 const roadmapItems = [
   {
-    quarter: 'Q2 2024',
-    title: 'AI-Powered Analytics',
-    description: 'Machine learning-driven insights and predictive analytics.',
+    quarter: 'Q2 2026',
+    title: 'Eco-friendly Initiatives for a Greener Future',
+    description: 'Sustainability-driven actions for a greener future.',
     status: 'In Progress',
   },
   {
-    quarter: 'Q3 2024',
-    title: 'Advanced Workflow Automation',
-    description: 'No-code workflow builder with visual automation tools.',
+    quarter: 'Q3 2026',
+    title: 'Target Identified (Inorganic Growth)',
+    description: 'Inorganic growth roadmap through strategic partnerships and acquisitions.',
     status: 'Planned',
   },
   {
-    quarter: 'Q4 2024',
-    title: 'Blockchain Integration',
-    description: 'Smart contracts and distributed ledger for supply chain.',
+    quarter: 'Q4 2026',
+    title: 'Integrating AI Solutions for Efficiency (Tech Advancement)',
+    description: 'Advanced AI solutions to improve efficiency and automate core operations.',
     status: 'Planned',
   },
   {
-    quarter: 'Q1 2025',
-    title: 'AR/VR Training Platform',
-    description: 'Immersive training experiences for complex operations.',
+    quarter: 'Q1 2027',
+    title: 'Enhanced Services to Improve Satisfaction (Customer Focus)',
+    description: 'Customer-first service enhancements to increase satisfaction and loyalty.',
+    status: 'Planned',
+  },
+  {
+    quarter: 'Q2 2027',
+    title: 'Driving Change with New Ideas (Innovation)',
+    description: 'Innovation-led initiatives to drive transformational change and growth.',
     status: 'Planned',
   },
 ]
@@ -37,10 +43,10 @@ export function RoadmapSection() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center space-y-4 mb-12">
           <h2 className="text-4xl sm:text-5xl font-bold text-foreground">
-            Road <span className="text-primary">Ahead</span>
+            ROAD <span className="text-primary">AHEAD</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Exciting innovations and features coming to iSmart ERP.
+            A sustainability-focused, growth-driven roadmap to transform our business.
           </p>
         </div>
 

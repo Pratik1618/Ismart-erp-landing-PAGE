@@ -232,15 +232,15 @@ function BottomConnectorLine({ fromRef, toRef, visible }: {
 }
 
 /* ─── Team grid ─────────────────────────────────────────────────────────── */
-function TeamGrid({ members, cols = 4 }: { members: Member[]; cols?: number }) {
+function TeamGrid({ members, cols = 4, size = 'sm' }: { members: Member[]; cols?: number; size?: 'sm' | 'md' }) {
   const gridCols: Record<number, string> = {
     4: 'grid-cols-2 sm:grid-cols-4',
     5: 'grid-cols-2 sm:grid-cols-3 xl:grid-cols-5',
     7: 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7',
   }
   return (
-    <div className={`grid gap-3 ${gridCols[cols] ?? 'grid-cols-2 sm:grid-cols-4'}`}>
-      {members.map((m, i) => <TeamCard key={i} member={m} size="sm" />)}
+    <div className={`grid gap-4 ${gridCols[cols] ?? 'grid-cols-2 sm:grid-cols-4'}`}>
+      {members.map((m, i) => <TeamCard key={i} member={m} size={size} />)}
     </div>
   )
 }
@@ -262,11 +262,30 @@ export function LeadershipSection() {
     setDirectorOpen(prev => {
       const next = prev === id ? null : id
       if (next) {
-        // wait for React to render the section, then scroll to it
+        // Wait for React to render + expand animation to start, then scroll gently
         setTimeout(() => {
           const target = id === 'vinayak' ? devSectionRef.current : hrSectionRef.current
-          target?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        }, 150)
+          if (!target) return
+          const targetY = target.getBoundingClientRect().top + window.scrollY - 80
+          const startY  = window.scrollY
+          const distance = targetY - startY
+          const duration = 900 // ms — slow and smooth
+          let startTime: number | null = null
+
+          function easeInOutCubic(t: number) {
+            return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+          }
+
+          function step(timestamp: number) {
+            if (!startTime) startTime = timestamp
+            const elapsed = timestamp - startTime
+            const progress = Math.min(elapsed / duration, 1)
+            window.scrollTo(0, startY + distance * easeInOutCubic(progress))
+            if (progress < 1) requestAnimationFrame(step)
+          }
+
+          requestAnimationFrame(step)
+        }, 200)
       }
       return next
     })
@@ -399,7 +418,7 @@ export function LeadershipSection() {
             {/* L4 — Sanka's team */}
             <Expandable open={sankaOpen}>
               <div>
-                <VStem height={24} />
+                <VStem height={28} />
                 <HConnector count={businessTeam.length} maxW="90%" />
                 <FadeRow className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5">
                   {businessTeam.map((m, i) => (
@@ -418,10 +437,10 @@ export function LeadershipSection() {
                 {/* L5 — Finance team */}
                 <Expandable open={financeOpen}>
                   <div>
-                    <VStem height={24} />
+                    <VStem height={28} />
                     <HConnector count={financeTeam.length} maxW="95%" />
-                    <FadeRow className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
-                      {financeTeam.map((m, i) => <TeamCard key={i} member={m} size="sm" />)}
+                    <FadeRow className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
+                      {financeTeam.map((m, i) => <TeamCard key={i} member={m} size="md" />)}
                     </FadeRow>
                   </div>
                 </Expandable>
@@ -432,7 +451,7 @@ export function LeadershipSection() {
             {anyBottomOpen && (
               <div className="mt-12">
                 <div className="lv-shimmer mb-8" />
-                <div className="max-w-2xl mx-auto">
+              <div className="max-w-4xl mx-auto">
 
                   {devOpen && (
                     <div
@@ -445,7 +464,7 @@ export function LeadershipSection() {
                           Reporting to Vinayak Bhise
                         </span>
                       </div>
-                      <TeamGrid members={devTeam} cols={4} />
+                      <TeamGrid members={devTeam} cols={4} size="md" />
                     </div>
                   )}
 
@@ -460,7 +479,7 @@ export function LeadershipSection() {
                           Reporting to Manoj Kambli
                         </span>
                       </div>
-                      <TeamGrid members={hrTeam} cols={4} />
+                      <TeamGrid members={hrTeam} cols={4} size="md" />
                     </div>
                   )}
 
