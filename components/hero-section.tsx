@@ -14,10 +14,10 @@ export function HeroSection() {
         <div className="text-center space-y-8">
           <div className="space-y-4">
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-foreground text-balance leading-tight">
-              Enterprise Resource Planning <span className="text-primary">Reimagined</span>
+              <span className="text-primary">E</span>nterprise <span className="text-primary">R</span>esource <span className="text-primary">P</span>lanning <span className="text-foreground">Reimagined</span>
             </h1>
             <p className="text-xl sm:text-2xl text-muted-foreground text-balance max-w-3xl mx-auto">
-              Transform your business with iSmart ERP. Seamlessly integrate commercial management, payroll, accounting, and human resources into one powerful platform.
+              iSmart ERP is a next-generation business platform shaped by 40+ years of FM expertise from Mr. Sanjay Khanvilkar. It seamlessly connects commercial management, payroll, accounting, and HR into one integrated system simplifying operations and accelerating growth.
             </p>
           </div>
 
