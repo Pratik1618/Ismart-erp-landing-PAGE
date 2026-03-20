@@ -28,8 +28,8 @@ const devTeam: Member[] = [
 ]
 
 const hrTeam: Member[] = [
-  { name: 'Pratima Chavan',  image: '/pratima.png', role: 'Payroll Executive' },
-  { name: 'Sagar Hatankar',  image: '/sagar.png',   role: 'Payroll Executive' },
+  { name: 'Pratima Chavan',  image: '/pratima.png', role: 'Sr.Executive HR' },
+  { name: 'Sagar Hatankar',  image: '/sagar.png',   role: 'HR & Payroll Executive' },
   { name: 'Kshitj Goankar',  image: '/ksh.png',     role: 'Payroll Executive' },
   { name: 'Sachin Pawar',    image: '/sachinp.png', role: 'Payroll Executive' },
 ]

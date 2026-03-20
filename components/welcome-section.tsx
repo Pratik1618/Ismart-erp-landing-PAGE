@@ -39,7 +39,7 @@ const erpModules = [
   { id: 15, title: 'Training L N D', description: 'Training programs', icon: BookOpen },
   { id: 16, title: 'Client Feedback', description: 'Customer surveys', icon: MessageCircle },
   { id: 17, title: 'AI & Analytics', description: 'Insights & automation', icon: Lightbulb },
-  { id: 18, title: 'FAQ (Manual)', description: 'Self-help knowledge base for quick answers and standard procedures.', icon: BookOpen },
+  { id: 18, title: 'FAQ (User Manual)', description: 'Self-help knowledge base for quick answers and standard procedures.', icon: BookOpen },
 
 ]
 
