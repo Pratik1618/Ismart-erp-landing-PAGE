@@ -39,6 +39,8 @@ const erpModules = [
   { id: 15, title: 'Training L N D', description: 'Training programs', icon: BookOpen },
   { id: 16, title: 'Client Feedback', description: 'Customer surveys', icon: MessageCircle },
   { id: 17, title: 'AI & Analytics', description: 'Insights & automation', icon: Lightbulb },
+  { id: 18, title: 'FAQ (Manual)', description: 'Self-help knowledge base for quick answers and standard procedures.', icon: BookOpen },
+
 ]
 
 export function WelcomeSection() {
@@ -52,7 +54,7 @@ export function WelcomeSection() {
             ERP Core <span className="text-primary">Modules</span>
           </h2>
           <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
-            17 integrated modules covering all aspects of enterprise operations.
+            18 integrated modules covering all aspects of enterprise operations.
           </p>
         </div>
 
